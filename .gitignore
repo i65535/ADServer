@@ -3,4 +3,6 @@
 *.prefs
 *.git
 .ropeproject
+.project
+.pydevproject
 

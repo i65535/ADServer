@@ -9,8 +9,8 @@ import json
 import uuid
 
 from api.accessmgr import AccessMgr
-from api.apiauthen import APIAuthen
 from common.util import Result, IsValidNamespace
+from core.apiauthen import APIAuthen
 from frame.Logger import Log, WebLog
 from frame.authen import ring8, ring0, ring3, ring5
 from frame.errcode import INVALID_PARAM_ERR, INVALID_JSON_DATA_ERR, NO_SUCH_USER_ERR, \
