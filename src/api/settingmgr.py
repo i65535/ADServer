@@ -14,7 +14,6 @@ from frame.errcode import INVALID_JSON_DATA_ERR, TEST_LDAP_AUTH_FAIL_ERR, \
     LDAP_SERVER_INFO_INVALID_ERR, LDAP_TEST_ACCOUNT_INVALID_ERR, \
     INVALID_AUTH_METHOD_ERR
 from frame.generalmgr import GeneralMgr
-from frame.ldapclient import LDAPClient
 from mongodb.dbconst import AUTH_LOCAL, AUTH_LDAP, LOCAL_FILE_SYSTEM, ID
 from mongoimpl.setting.configdbimpl import ConfigDBImpl
 from mongoimpl.setting.emaildbimpl import EmailDBImpl
@@ -184,44 +183,6 @@ class SettingMgr(object):
         if not rlt.success:
             Log(1, 'update_ldap fail,as[%s]'%(rlt.message))
         return rlt
-
-    @ring0
-    def update_ldap(self, post_data):
-        try:
-            ldap = json.loads(post_data.replace("'", '"'))
-        except Exception,e:
-            Log(1,"update_ldap.parse data to json fail,input[%s]"%(post_data))
-            return Result('',INVALID_JSON_DATA_ERR,str(e))
-        
-        rlt = LDAPDBImpl.instance().update_ldap_info(ldap)
-        if not rlt.success:
-            Log(1, 'update_ldap fail,as[%s]'%(rlt.message))
-        return rlt
-    
-    @ring0
-    def test_ldap_connect(self, post_data):
-        try:
-            user_info = json.loads(post_data.replace("'", '"'))
-        except Exception,e:
-            Log(1,"test_ldap_connect.parse data to json fail,input[%s]"%(post_data))
-            return Result('',INVALID_JSON_DATA_ERR,str(e))
-        if 'password' in user_info:
-            user_info['password'] = base64.decodestring(user_info['password'])
-        client = LDAPClient.new_ladp_client(**user_info)
-        if not client:
-            return Result('', LDAP_SERVER_INFO_INVALID_ERR, 'LDAP server info invalid')
-        
-        username = user_info.get('test_user_name', '')
-        password = user_info.get('test_password', '')
-        if not (username and password):
-            return Result('', LDAP_TEST_ACCOUNT_INVALID_ERR, 'Test parameter invalid')
-        
-        if client.verify_user(username, base64.decodestring(password)):
-            WebLog(3, 'user[%s]login LDAP success.'%(username))
-            return Result('ok')
-        else:
-            WebLog(3, 'user[%s]login LDAP fail.'%(username))
-            return Result('', TEST_LDAP_AUTH_FAIL_ERR, 'user name not exist or password invalid.')
     
     @ring0
     def emails(self):
