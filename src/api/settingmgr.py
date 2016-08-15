@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 20016-2016 The i65535.
 # See LICENSE for details.
-import base64
 import json
 
 from api.emailmgr import EmailMgr
@@ -10,9 +9,7 @@ from common.util import Result
 from frame.Logger import Log, WebLog
 from frame.authen import ring0, ring3, ring5
 from frame.configmgr import GetSysConfig
-from frame.errcode import INVALID_JSON_DATA_ERR, TEST_LDAP_AUTH_FAIL_ERR, \
-    LDAP_SERVER_INFO_INVALID_ERR, LDAP_TEST_ACCOUNT_INVALID_ERR, \
-    INVALID_AUTH_METHOD_ERR
+from frame.errcode import INVALID_JSON_DATA_ERR, INVALID_AUTH_METHOD_ERR
 from frame.generalmgr import GeneralMgr
 from mongodb.dbconst import AUTH_LOCAL, AUTH_LDAP, LOCAL_FILE_SYSTEM, ID
 from mongoimpl.setting.configdbimpl import ConfigDBImpl
