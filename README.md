@@ -1,1 +1,1 @@
-Twisted pyasn1 zope.interface pymongo pycurl pycrypto python-keyczar APScheduler
+Twisted pyasn1 zope.interface pymongo pycrypto python-keyczar APScheduler

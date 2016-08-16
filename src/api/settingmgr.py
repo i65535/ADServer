@@ -2,13 +2,14 @@
 # Copyright (c) 20016-2016 The i65535.
 # See LICENSE for details.
 import json
+import os
 
 from api.emailmgr import EmailMgr
 from common.timer import Timer
 from common.util import Result
 from frame.Logger import Log, WebLog
-from frame.authen import ring0, ring3, ring5
-from frame.configmgr import GetSysConfig
+from frame.authen import ring0, ring3, ring5, ring8
+from frame.configmgr import GetSysConfig, ConfigMgr
 from frame.errcode import INVALID_JSON_DATA_ERR, INVALID_AUTH_METHOD_ERR
 from frame.generalmgr import GeneralMgr
 from mongodb.dbconst import AUTH_LOCAL, AUTH_LDAP, LOCAL_FILE_SYSTEM, ID
@@ -216,6 +217,19 @@ class SettingMgr(object):
         pro = GetSysConfig('pro_version')
         dev = GetSysConfig('dev_version')
         return Result({'pro_version': pro, 'dev_version': dev})
+    
+    @ring8
+    def apk_list(self):
+        wwwroot = ConfigMgr.instance().get_www_root_path()
+        arr = []
+        length = len(wwwroot)
+        for root, _, files in os.walk(wwwroot):
+            for _file in files:
+                fullpath = os.path.join(root, _file)
+                arr.append(fullpath[length:])
+        
+        return Result(arr)
+                
     
     
     

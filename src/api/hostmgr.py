@@ -41,10 +41,7 @@ class HostMgr(object):
         self.timer = Timer(1, self.host,'host time')
         self.timer.start()
         self.net_stats = []
-        cli = DockerClient.instance()
-        if cli:
-            self.container_net_stats = ContainerNetStats(cli, self.net_stats)
-            self.container_net_stats.start()
+
         
     @ring0
     def info(self):

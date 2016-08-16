@@ -53,7 +53,7 @@ class APIAuthen(authen):
 #         
 #         return passport
     
-        if method in ['whatTime','login', 'ready']:
+        if method in ['whatTime','login', 'ready', 'apk_list']:
             passport = {}
             passport["method"] = method
             passport["ring"] = "ring8"
