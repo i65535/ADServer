@@ -223,7 +223,8 @@ class SettingMgr(object):
         wwwroot = ConfigMgr.instance().get_www_root_path()
         arr = []
         length = len(wwwroot)
-        for root, _, files in os.walk(wwwroot):
+        down_path = os.path.join(wwwroot, 'download')
+        for root, _, files in os.walk(down_path):
             for _file in files:
                 fullpath = os.path.join(root, _file)
                 arr.append(fullpath[length:])
