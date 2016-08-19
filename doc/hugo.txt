@@ -1,0 +1,23 @@
+http://gohugo.io/overview/quickstart/
+
+
+1、创建网站
+    hugo new site doc
+
+2、启动web
+    hugo server
+
+其他命令：
+hugo help
+hugo new post/good-to-great.md
+hugo server --buildDrafts
+
+
+hugo server -d dev
+
+http://gohugo.io/extras/crossreferences/
+https://gohugo.io/extras/highlighting
+https://gohugo.io/content/summaries
+
+生成html文件
+hugo -s D:\workspace\Hugo

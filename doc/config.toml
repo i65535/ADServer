@@ -1,0 +1,27 @@
+baseurl = "/"
+contentdir = "content"
+languageCode = "zh-cn"
+title = "ADServer Docs"
+theme = "beg"
+relativeURLs = true
+verbose = true
+author = "Jack"
+copyright = "Copyright (c) 2016 - 2016, xxxxxx; all rights reserved."
+canonifyurls = true
+paginate = 5
+publishdir = "public"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[params]
+  disqusShortname = "your disqus id." # optional
+  toc = true # optional, When set to TRUE this parameter, table of contents appears in all articles.
+
+[blackfriday]
+  fractions = false
+  smartDashes = false
+  plainIDAnchors = true
+  sourceRelativeLinksEval = true
+
