@@ -8,15 +8,13 @@ import base64
 import json
 import uuid
 
-from api.accessmgr import AccessMgr
 from common.util import Result, IsValidNamespace
 from core.apiauthen import APIAuthen
 from frame.Logger import Log, WebLog
 from frame.authen import ring8, ring0, ring3, ring5
 from frame.errcode import INVALID_PARAM_ERR, INVALID_JSON_DATA_ERR, NO_SUCH_USER_ERR, \
-    PARAME_IS_INVALID_ERR, USER_INFO_INVALID_ERR, \
-    ABNORMAL_CALL_ERR, OLD_PASSWORD_INVALID_ERR, \
-    USER_NAME_INVALID_ERR, CAN_NOT_ADD_LOCAL_USER_ERR
+    PARAME_IS_INVALID_ERR, ABNORMAL_CALL_ERR, OLD_PASSWORD_INVALID_ERR, \
+    USER_NAME_INVALID_ERR
 from mongodb.dbconst import ID, AUTH_LOCAL
 from mongoimpl.registry.groupdbimpl import GroupDBImpl
 from mongoimpl.registry.groupnamespcdbimpl import GroupNamespcDBImpl
@@ -28,7 +26,7 @@ _ALL = "All"
 
 class AccountMgr(object):
     def __init__(self):
-        self.accessmgr = AccessMgr()
+        pass
     
     @ring0
     def accounts(self, group_id='', **kw):
@@ -76,7 +74,7 @@ class AccountMgr(object):
             return Result('',NO_SUCH_USER_ERR,'user not exist,or password is invalid')
         
         user_info = rlt.content
-        if not self.accessmgr.verify_user_password(user_id, account.get('password',''), user_info):
+        if account.get('password','') != user_info.get('password','-'):
             return Result('',NO_SUCH_USER_ERR,'user not exist,or password is invalid')
         
         WebLog(3, '[%s] user [%s] login'%(user_info.get('source', AUTH_LOCAL), user_id))
@@ -134,6 +132,7 @@ class AccountMgr(object):
         
         
     @ring0
+    @ring8
     def add_account(self, post_data):
         try:
             account = json.loads(post_data.replace("'", '"'))
@@ -141,21 +140,6 @@ class AccountMgr(object):
             Log(1,"save_account.parse data to json fail,input[%s]"%(post_data))
             return Result('',INVALID_JSON_DATA_ERR,str(e))
         
-        if not self.accessmgr.verify_user_info(account):
-            WebLog(2, 'invalid user info')
-            return Result('', USER_INFO_INVALID_ERR, 'invalid user info')
-        
-        _id = account.get('_id','')
-        _id = str(_id).lower()
-        if not IsValidNamespace(_id):
-            return Result('', USER_NAME_INVALID_ERR, 'invalid user id')
-        
-        if not self.accessmgr.is_local_auth():
-            WebLog(2, 'add_account fail,as[can not add local user]')
-            return Result('', CAN_NOT_ADD_LOCAL_USER_ERR, 'can not add local user.')
-        
-        account['_id'] = _id
-        account['source'] = AUTH_LOCAL
         return UserDBImpl.instance().create_new_user(account)
         
     
@@ -170,9 +154,6 @@ class AccountMgr(object):
         except Exception,e:
             Log(1,"update_account.parse data to json fail,input[%s]"%(post_data))
             return Result('',INVALID_JSON_DATA_ERR,str(e))
-        
-        if not self.accessmgr.verify_user_info(info):
-            return Result('', USER_INFO_INVALID_ERR, 'invalid user info')
         
         rlt = UserDBImpl.instance().update_user(_id, info)
         if rlt.success:
@@ -274,9 +255,9 @@ class AccountMgr(object):
             user_id = account.get('username')
             user_id = base64.decodestring(user_id)
             rlt = UserDBImpl.instance().read_record(user_id)
-            # if not rlt.success:
-            #    return Result('',NO_SUCH_USER_ERR,'user not exist,or password is invalid')
-            # if account.get('oldpwd') != getMD5('%s:%s'%(user_id, rlt.content['password'])):
+            if not rlt.success:
+                return Result('',NO_SUCH_USER_ERR,'user not exist,or password is invalid')
+
             if account.get('oldpwd') != rlt.content['password']:
                 return Result('', OLD_PASSWORD_INVALID_ERR,'old password is invalid')
             
